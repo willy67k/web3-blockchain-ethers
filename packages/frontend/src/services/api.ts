@@ -1,7 +1,6 @@
 import axios from "axios";
 
 const baseURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:6970/api/v1";
-console.log("API BaseURL:", baseURL);
 
 const api = axios.create({
   baseURL,
@@ -24,6 +23,11 @@ export const callContract = async (data: { contractAddress: string; abi: string;
 
 export const getEvents = async () => {
   const response = await api.get("/events");
+  return response.data;
+};
+
+export const queryEvents = async (data: { address: string; eventName: string; abi: string; fromBlock?: string | number; toBlock?: string | number }) => {
+  const response = await api.post("/events/query", data);
   return response.data;
 };
 
