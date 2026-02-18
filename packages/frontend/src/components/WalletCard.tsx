@@ -22,32 +22,42 @@ const WalletCard: React.FC = () => {
   };
 
   return (
-    <div className="card glass">
-      <h3>Wallet Balance</h3>
-      <div style={{ display: "flex", gap: "1rem" }}>
-        <input type="text" placeholder="Enter Wallet Address (0x...)" value={address} onChange={(e) => setAddress(e.target.value)} />
-        <button onClick={handleFetch} disabled={loading} style={{ alignSelf: "flex-start" }}>
+    <div className="rounded-2xl border border-white/10 bg-[#1e293b]/70 p-8 shadow-2xl backdrop-blur-xl">
+      <h3 className="mb-6 bg-gradient-to-r from-[#818cf8] to-[#c084fc] bg-clip-text text-xl font-bold text-transparent">Wallet Balance</h3>
+      <div className="flex gap-4">
+        <input
+          type="text"
+          placeholder="Enter Wallet Address (0x...)"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          className="w-full rounded-lg border border-white/10 bg-[#0f172a]/50 px-4 py-3 text-white transition-colors focus:border-[#6366f1] focus:outline-none"
+        />
+        <button
+          onClick={handleFetch}
+          disabled={loading}
+          className="cursor-pointer self-start rounded-lg bg-gradient-to-br from-[#6366f1] to-[#a855f7] px-6 py-3 font-semibold text-white shadow-md transition-all hover:translate-y-[-2px] hover:shadow-lg hover:brightness-110 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-50"
+        >
           {loading ? "Fetching..." : "Check"}
         </button>
       </div>
 
-      {error && <p className="error">{error}</p>}
+      {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
 
       {data && (
-        <div style={{ marginTop: "2rem" }}>
-          <div style={{ marginBottom: "1.5rem" }}>
-            <p style={{ color: "var(--text-dim)", fontSize: "0.875rem" }}>Native Balance</p>
-            <p style={{ fontSize: "2rem", fontWeight: "bold" }}>
-              {data.ethBalance} <span style={{ fontSize: "1rem", color: "var(--text-dim)" }}>ETH</span>
+        <div className="mt-8">
+          <div className="mb-6">
+            <p className="text-sm text-slate-400">Native Balance</p>
+            <p className="text-[2rem] font-bold">
+              {data.ethBalance} <span className="text-base text-slate-400">ETH</span>
             </p>
           </div>
 
-          <p style={{ color: "var(--text-dim)", fontSize: "0.875rem", marginBottom: "0.5rem" }}>Tokens</p>
-          <ul className="token-list">
+          <p className="mb-2 text-sm text-slate-400">Tokens</p>
+          <ul className="list-none">
             {data.tokens.map((token: any, index: number) => (
-              <li key={index} className="token-item">
+              <li key={index} className="flex justify-between border-b border-white/10 py-4 last:border-0">
                 <span>{token.symbol}</span>
-                <span style={{ fontWeight: "600" }}>{token.balance}</span>
+                <span className="font-semibold">{token.balance}</span>
               </li>
             ))}
           </ul>

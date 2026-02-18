@@ -32,45 +32,70 @@ const TransactionForm: React.FC = () => {
   };
 
   return (
-    <div className="card glass">
-      <h3>Send Transaction</h3>
+    <div className="rounded-2xl border border-white/10 bg-[#1e293b]/70 p-8 shadow-2xl backdrop-blur-xl">
+      <h3 className="mb-6 bg-gradient-to-r from-[#818cf8] to-[#c084fc] bg-clip-text text-xl font-bold text-transparent">Send Transaction</h3>
       <form onSubmit={handleSubmit}>
-        <label style={{ fontSize: "0.875rem", color: "var(--text-dim)" }}>Sender Private Key</label>
-        <input type="password" placeholder="0x..." value={formData.fromPrivateKey} onChange={(e) => setFormData({ ...formData, fromPrivateKey: e.target.value })} required />
+        <label className="text-sm text-slate-400">Sender Private Key</label>
+        <input
+          type="password"
+          placeholder="0x..."
+          value={formData.fromPrivateKey}
+          onChange={(e) => setFormData({ ...formData, fromPrivateKey: e.target.value })}
+          required
+          className="mb-4 w-full rounded-lg border border-white/10 bg-[#0f172a]/50 px-4 py-3 text-white transition-colors focus:border-[#6366f1] focus:outline-none"
+        />
 
-        <label style={{ fontSize: "0.875rem", color: "var(--text-dim)" }}>Recipient Address</label>
-        <input type="text" placeholder="0x..." value={formData.to} onChange={(e) => setFormData({ ...formData, to: e.target.value })} required />
+        <label className="text-sm text-slate-400">Recipient Address</label>
+        <input
+          type="text"
+          placeholder="0x..."
+          value={formData.to}
+          onChange={(e) => setFormData({ ...formData, to: e.target.value })}
+          required
+          className="mb-4 w-full rounded-lg border border-white/10 bg-[#0f172a]/50 px-4 py-3 text-white transition-colors focus:border-[#6366f1] focus:outline-none"
+        />
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+        <div className="grid grid-cols-2 gap-4">
           <div>
-            <label style={{ fontSize: "0.875rem", color: "var(--text-dim)" }}>Amount</label>
-            <input type="text" placeholder="0.01" value={formData.amount} onChange={(e) => setFormData({ ...formData, amount: e.target.value })} required />
+            <label className="text-sm text-slate-400">Amount</label>
+            <input
+              type="text"
+              placeholder="0.01"
+              value={formData.amount}
+              onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+              required
+              className="mb-4 w-full rounded-lg border border-white/10 bg-[#0f172a]/50 px-4 py-3 text-white transition-colors focus:border-[#6366f1] focus:outline-none"
+            />
           </div>
           <div>
-            <label style={{ fontSize: "0.875rem", color: "var(--text-dim)" }}>Token Address (Optional)</label>
-            <input type="text" placeholder="Leave empty for ETH" value={formData.tokenAddress} onChange={(e) => setFormData({ ...formData, tokenAddress: e.target.value })} />
+            <label className="text-sm text-slate-400">Token Address (Optional)</label>
+            <input
+              type="text"
+              placeholder="Leave empty for ETH"
+              value={formData.tokenAddress}
+              onChange={(e) => setFormData({ ...formData, tokenAddress: e.target.value })}
+              className="mb-4 w-full rounded-lg border border-white/10 bg-[#0f172a]/50 px-4 py-3 text-white transition-colors focus:border-[#6366f1] focus:outline-none"
+            />
           </div>
         </div>
 
-        <button type="submit" disabled={loading} style={{ width: "100%", marginTop: "1rem" }}>
+        <button
+          type="submit"
+          disabled={loading}
+          className="mt-4 w-full cursor-pointer rounded-lg bg-gradient-to-br from-[#6366f1] to-[#a855f7] px-6 py-3 font-semibold text-white shadow-md transition-all hover:translate-y-[-2px] hover:shadow-lg hover:brightness-110 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-50"
+        >
           {loading ? "Sending..." : "Send Transaction"}
         </button>
       </form>
 
-      {error && (
-        <p className="error" style={{ marginTop: "1rem" }}>
-          {error}
-        </p>
-      )}
+      {error && <p className="mt-4 text-sm text-red-500">{error}</p>}
 
       {result && (
-        <div style={{ marginTop: "1.5rem", padding: "1rem", background: "rgba(16, 185, 129, 0.1)", borderRadius: "0.5rem", border: "1px solid rgba(16, 185, 129, 0.2)" }}>
-          <p className="status-submitted" style={{ fontWeight: "bold" }}>
-            Success!
-          </p>
-          <p style={{ fontSize: "0.75rem", wordBreak: "break-all", marginTop: "0.5rem" }}>
+        <div className="mt-6 rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-4">
+          <p className="font-bold text-emerald-500">Success!</p>
+          <p className="mt-2 break-all text-xs">
             Hash:{" "}
-            <a href={`https://sepolia.etherscan.io/tx/${result.txHash}`} target="_blank" rel="noreferrer" style={{ color: "#6366f1" }}>
+            <a href={`https://sepolia.etherscan.io/tx/${result.txHash}`} target="_blank" rel="noreferrer" className="text-indigo-400 hover:underline">
               {result.txHash}
             </a>
           </p>

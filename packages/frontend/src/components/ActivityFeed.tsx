@@ -25,39 +25,39 @@ const ActivityFeed: React.FC = () => {
   }, []);
 
   return (
-    <div className="card glass" style={{ gridColumn: "1 / -1" }}>
-      <h3>Live Network Activity (WETH Transfer Events)</h3>
-      <div style={{ maxHeight: "400px", overflowY: "auto" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.875rem" }}>
+    <div className="rounded-2xl border border-white/10 bg-[#1e293b]/70 p-8 shadow-2xl backdrop-blur-xl md:col-span-2">
+      <h3 className="mb-6 bg-gradient-to-r from-[#818cf8] to-[#c084fc] bg-clip-text text-xl font-bold text-transparent">Live Network Activity (WETH Transfer Events)</h3>
+      <div className="max-h-[400px] overflow-y-auto rounded-xl border border-white/5 bg-black/20">
+        <table className="w-full border-collapse text-left text-sm">
           <thead>
-            <tr style={{ color: "var(--text-dim)", borderBottom: "1px solid var(--border)" }}>
-              <th style={{ padding: "1rem" }}>Time</th>
-              <th style={{ padding: "1rem" }}>From</th>
-              <th style={{ padding: "1rem" }}>To</th>
-              <th style={{ padding: "1rem" }}>Value (WETH)</th>
-              <th style={{ padding: "1rem" }}>Link</th>
+            <tr className="border-b border-white/10 text-slate-400">
+              <th className="p-4">Time</th>
+              <th className="p-4">From</th>
+              <th className="p-4">To</th>
+              <th className="p-4">Value (WETH)</th>
+              <th className="p-4">Link</th>
             </tr>
           </thead>
           <tbody>
             {events.length === 0 ? (
               <tr>
-                <td colSpan={5} style={{ padding: "2rem", textAlign: "center", color: "var(--text-dim)" }}>
+                <td colSpan={5} className="p-8 text-center text-slate-400">
                   Listening for new events...
                 </td>
               </tr>
             ) : (
               events.map((ev, i) => (
-                <tr key={i} style={{ borderBottom: "1px solid var(--border)" }}>
-                  <td style={{ padding: "1rem" }}>{new Date(ev.timestamp).toLocaleTimeString()}</td>
-                  <td style={{ padding: "1rem", fontFamily: "monospace" }}>
+                <tr key={i} className="border-b border-white/5 transition-colors hover:bg-white/5">
+                  <td className="p-4">{new Date(ev.timestamp).toLocaleTimeString()}</td>
+                  <td className="p-4 font-mono text-indigo-300">
                     {ev.from.slice(0, 6)}...{ev.from.slice(-4)}
                   </td>
-                  <td style={{ padding: "1rem", fontFamily: "monospace" }}>
+                  <td className="p-4 font-mono text-indigo-300">
                     {ev.to.slice(0, 6)}...{ev.to.slice(-4)}
                   </td>
-                  <td style={{ padding: "1rem", fontWeight: "bold" }}>{parseFloat(ev.value).toFixed(4)}</td>
-                  <td style={{ padding: "1rem" }}>
-                    <a href={`https://sepolia.etherscan.io/tx/${ev.txHash}`} target="_blank" rel="noreferrer" style={{ color: "var(--primary)" }}>
+                  <td className="p-4 font-bold text-emerald-400">{parseFloat(ev.value).toFixed(4)}</td>
+                  <td className="p-4">
+                    <a href={`https://sepolia.etherscan.io/tx/${ev.txHash}`} target="_blank" rel="noreferrer" className="font-semibold text-[#6366f1] hover:underline">
                       View
                     </a>
                   </td>
