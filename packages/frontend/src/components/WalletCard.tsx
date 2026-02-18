@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { getBalance } from "../services/api";
+import { getBalance, type BalanceResponse, type TokenBalance } from "../services/api";
 
 const WalletCard: React.FC = () => {
   const [address, setAddress] = useState("");
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<BalanceResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -15,7 +15,7 @@ const WalletCard: React.FC = () => {
       const result = await getBalance(address);
       setData(result);
     } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to fetch balance");
+      setError((err.response?.data?.message as string) || "Failed to fetch balance");
     } finally {
       setLoading(false);
     }
@@ -54,7 +54,7 @@ const WalletCard: React.FC = () => {
 
           <p className="mb-2 text-sm text-slate-400">Tokens</p>
           <ul className="list-none">
-            {data.tokens.map((token: any, index: number) => (
+            {data.tokens.map((token: TokenBalance, index: number) => (
               <li key={index} className="flex justify-between border-b border-white/10 py-4 last:border-0">
                 <span>{token.symbol}</span>
                 <span className="font-semibold">{token.balance}</span>

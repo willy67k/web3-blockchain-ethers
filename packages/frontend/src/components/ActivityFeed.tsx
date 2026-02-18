@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { getEvents, queryEvents } from "../services/api";
+import { getEvents, queryEvents, type BlockchainEvent, type QueryResult } from "../services/api";
+
+interface QueryParams {
+  address: string;
+  eventName: string;
+  abi: string;
+  fromBlock: string;
+}
 
 const ActivityFeed: React.FC = () => {
-  const [liveEvents, setLiveEvents] = useState<any[]>([]);
-  const [queryResults, setQueryResults] = useState<any[]>([]);
+  const [liveEvents, setLiveEvents] = useState<BlockchainEvent[]>([]);
+  const [queryResults, setQueryResults] = useState<QueryResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showQueryForm, setShowQueryForm] = useState(false);
 
-  const [queryParams, setQueryParams] = useState({
+  const [queryParams, setQueryParams] = useState<QueryParams>({
     address: "0xaA8E23Fb1079EA71e0a56F48a2aA51851D8433D0",
     eventName: "Transfer",
     abi: '["event Transfer(address indexed from, address indexed to, uint256 value)"]',
@@ -123,7 +130,7 @@ const ActivityFeed: React.FC = () => {
                       </a>
                     </div>
                     <div className="mt-1 text-slate-300">
-                      {Object.entries(res.args).map(([key, val]: [string, any]) => (
+                      {Object.entries(res.args).map(([key, val]: [string, string]) => (
                         <div key={key}>
                           <span className="text-slate-500">{key}:</span> {val}
                         </div>

@@ -2,6 +2,7 @@ import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from "@nestjs/commo
 import { BlockchainService } from "../blockchain/blockchain.service.js";
 import { ethers } from "ethers";
 import { QueryEventsDto } from "./dto/query-events.dto.js";
+import { BlockchainEvent, QueryResult } from "../../shared/interfaces/blockchain.interface.js";
 
 @Injectable()
 export class EventsService implements OnModuleInit, OnModuleDestroy {
@@ -10,7 +11,7 @@ export class EventsService implements OnModuleInit, OnModuleDestroy {
   private readonly USDT_ADDRESS = "0xaA8E23Fb1079EA71e0a56F48a2aA51851D8433D0";
   private lastBlock: number | null = null;
   private pollInterval: NodeJS.Timeout;
-  private events: any[] = [];
+  private events: BlockchainEvent[] = [];
 
   constructor(private readonly blockchainService: BlockchainService) {}
 
@@ -30,7 +31,7 @@ export class EventsService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  getEvents() {
+  getEvents(): BlockchainEvent[] {
     return this.events;
   }
 
@@ -53,9 +54,9 @@ export class EventsService implements OnModuleInit, OnModuleDestroy {
             const logs = await contract.queryFilter("Transfer", fromBlock, toBlock);
 
             for (const log of logs) {
-              if ("args" in log) {
-                const { from, to, value } = log.args;
-                const eventData = {
+              if (log instanceof ethers.EventLog && log.args) {
+                const { from, to, value } = log.args as unknown as { from: string; to: string; value: bigint };
+                const eventData: BlockchainEvent = {
                   event: "Transfer",
                   from,
                   to,
@@ -82,7 +83,7 @@ export class EventsService implements OnModuleInit, OnModuleDestroy {
     }, 10000); // Poll every 10 seconds
   }
 
-  async queryEvents(query: QueryEventsDto) {
+  async queryEvents(query: QueryEventsDto): Promise<QueryResult[]> {
     const { address, eventName, abi, fromBlock, toBlock } = query;
     const parsedAbi = typeof abi === "string" ? JSON.parse(abi) : abi;
     const contract = new ethers.Contract(address, parsedAbi, this.blockchainService.getProvider());
@@ -90,21 +91,23 @@ export class EventsService implements OnModuleInit, OnModuleDestroy {
     const logs = await contract.queryFilter(eventName, fromBlock || -1000, toBlock || "latest");
 
     return logs.map((log) => {
-      const data = "args" in log ? log.args : {};
-      const processedArgs: Record<string, any> = {};
-      if (data) {
-        Object.keys(data).forEach((key) => {
-          if (isNaN(Number(key))) {
-            const val = (data as any)[key];
-            processedArgs[key] = typeof val === "bigint" ? val.toString() : val;
-          }
-        });
+      const args: Record<string, string> = {};
+
+      if (log instanceof ethers.EventLog && log.args) {
+        const fragment = log.fragment;
+        if (fragment && fragment.inputs) {
+          fragment.inputs.forEach((input, index) => {
+            const name = input.name || `arg${index}`;
+            const val = log.args[index];
+            args[name] = typeof val === "bigint" ? val.toString() : String(val);
+          });
+        }
       }
 
       return {
         txHash: log.transactionHash,
         blockNumber: log.blockNumber,
-        args: processedArgs,
+        args,
       };
     });
   }
