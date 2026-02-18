@@ -9,7 +9,7 @@ export class EventsController {
 
   @Get()
   @ApiOperation({ summary: "Get recent blockchain events" })
-  async getEvents() {
+  getEvents() {
     return this.eventsService.getEvents();
   }
 }
