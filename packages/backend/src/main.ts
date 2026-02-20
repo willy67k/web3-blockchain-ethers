@@ -23,6 +23,22 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("swagger/api", app, document);
 
+  if (process.env.VERCEL || process.env.VITE_VERCEL_ENV) {
+    await app.init();
+    return app.getHttpAdapter().getInstance();
+  }
+
   await app.listen(process.env.PORT ?? 6970);
 }
-bootstrap();
+
+let handler;
+if (process.env.VERCEL || process.env.VITE_VERCEL_ENV) {
+  handler = async (req: any, res: any) => {
+    const server = await bootstrap();
+    return server(req, res);
+  };
+} else {
+  bootstrap();
+}
+
+export default handler;
