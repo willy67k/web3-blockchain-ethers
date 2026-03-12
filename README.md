@@ -1,162 +1,103 @@
-# Blockchain Developer
+# Blockchain Ethers Manager (Full-stack Web3 Wallet)
 
-## 技術棧要求：
+A modern, high-performance monorepo application for blockchain interaction, built with **Nest.js**, **React**, and **Ethers.js**. It provides a comprehensive suite of tools for querying balances, sending transactions, and monitoring smart contract events on EVM-compatible networks.
 
-- Node.js + TypeScript
-- Ethers.js 或 Web3.js
-- REST API
-- 可選：簡單前端（React / TypeScript）展示交易結果
-- 使用 Ethereum Testnet（Goerli / Sepolia）或 EVM 兼容鏈
+基於 **Nest.js**、**React** 與 **Ethers.js** 構建的現代化高性能 Monorepo 應用程式。提供完整的工具集，用於在 EVM 兼容鏈上查詢餘額、發送交易及監控智能合約事件。
 
-## User Story 1：查詢錢包餘額（Read）
+---
 
-目標：建立一個 REST API，能查詢任意地址的 ETH 和 ERC-20 代幣餘額。
+## 🚀 Features (核心功能)
 
-需求：
+- **Balance Tracking**: Query ETH and ERC-20 token balances for any address. (餘額追蹤：查詢任意地址的 ETH 及 ERC-20 代幣餘額。)
+- **Token Transfers**: Securely send ETH or ERC-20 tokens via REST API. (代幣轉帳：透過 REST API 安全發送 ETH 或 ERC-20 代幣。)
+- **Event Monitoring**: Real-time listening for smart contract events (e.g., Transfer) with logging. (事件監控：即時監聽智能合約事件並記錄日誌。)
+- **Contract Interaction**: Programmatic interaction with custom contract methods (mint, swap, etc.). (合約互動：以程式化方式調用自訂合約方法。)
 
-- `GET /api/balance/:address`
-- 回傳：
+---
 
-```json
-{
-  "address": "0xabc...",
-  "ethBalance": "0.123",
-  "tokens": [
-    { "symbol": "USDT", "balance": "100.5" },
-    { "symbol": "DAI", "balance": "50.0" }
-  ]
-}
+## 🛠 Tech Stack (技術棧)
+
+### Monorepo & Infrastructure
+
+- **[Turborepo](https://turbo.build/repo)**: High-performance build system.
+- **TypeScript**: Type-safe development throughout the stack.
+- **Yarn Workspaces**: Efficient package management.
+
+### Backend (packages/backend)
+
+- **[Nest.js](https://nestjs.com/)**: Progressive Node.js framework.
+- **[Ethers.js (v6)](https://docs.ethers.org/v6/)**: For blockchain communication.
+- **Logging**: Pino & Pino-pretty for structured logging.
+
+### Frontend (packages/frontend)
+
+- **[React (v19)](https://react.dev/)**: For building a dynamic user interface.
+- **[Vite](https://vitejs.dev/)**: Lightning-fast build tool.
+- **[Tailwind CSS](https://tailwindcss.com/)**: Utility-first CSS framework for modern design.
+- **Axios**: HTTP client for API communication.
+
+---
+
+## 🏁 Getting Started (如何啟動)
+
+### 1. Prerequisites (先決條件)
+
+- Node.js (v18+)
+- Yarn or NPM
+
+### 2. Installation (安裝)
+
+Clone the repository and install dependencies from the root:
+
+```bash
+yarn install
 ```
 
-- 使用 Ethers.js 連接 Testnet provider
-- ERC-20 可選幾個示例 token（用 balanceOf 讀取）
+### 3. Configuration (配置)
 
-## User Story 2：發送交易（Write）
+Set up environment variables in both packages:
 
-目標：提供 API 讓使用者可以發送 ETH 或 ERC-20 代幣交易。
+**Backend (`packages/backend/.env`):**
 
-需求：
-
-- `POST /api/transfer`
-
-```json
-{
-  "fromPrivateKey": "0x...",
-  "to": "0xrecipient...",
-  "amount": "0.01",
-  "tokenAddress": "0x..." // 可為 null 表示 ETH
-}
+```env
+PORT=6970
+RPC_URL=your_rpc_endpoint (e.g., Alchemy / Infura)
+FRONTEND_URL=http://localhost:6969
 ```
 
-- 後端用 Ethers.js / Signer 發送交易
-- 回傳：
+**Frontend (`packages/frontend/.env`):**
 
-```json
-{
-  "txHash": "0xabc123...",
-  "status": "submitted"
-}
+```env
+VITE_API_URL=http://localhost:6970
 ```
 
-- 設定 gasLimit，處理 nonce
+### 4. Running the Project (運行專案)
 
-## User Story 3：智能合約事件監聽
+Start both backend and frontend in development mode using Turborepo:
 
-目標：監聽一個智能合約事件，將事件記錄到後端 DB 或 log。
-
-需求：
-
-- 監聽 ERC-20 Transfer 事件或自訂合約事件
-- 當事件發生：
-  - Log from, to, value, txHash
-  - 可選：存入 SQLite / JSON file / MongoDB
-
-提示：
-
-```ts
-contract.on("Transfer", (from, to, value, event) => {
-  console.log(
-    `Transfer: ${from} -> ${to}, value: ${ethers.formatUnits(value, 18)}`,
-  );
-});
+```bash
+npm run dev
 ```
 
-## User Story 4（進階可選）：合約互動
+- Frontend will be available at: `http://localhost:6969`
+- Backend API will be available at: `http://localhost:6970`
 
-目標：提供 API 調用自訂合約方法，例如 mint 或 swap。
+---
 
-需求：
+## 📂 Project Structure (專案結構)
 
-- POST `/api/contract/call`
-
-```json
-{
-  "method": "mint",
-  "args": ["0xrecipient...", "1000"]
-}
-```
-
-- 後端使用 Ethers.js 對智能合約呼叫 method
-- 回傳 txHash
-
-## 評分重點（對應 JD）
-
-| 技能             | 評分指標                                        |
-| ---------------- | ----------------------------------------------- |
-| Node.js Backend  | REST API 設計、錯誤處理、整潔程式碼             |
-| Ethers.js / Web3 | Provider/Signer、read/write、事件監聽、交易流程 |
-| Blockchain 實務  | Testnet 上成功查餘額、送交易、事件監控          |
-| API 整合         | 前端或 Postman 可呼叫 API                       |
-| 安全 / Gas       | gasLimit、nonce 處理正確                        |
-
-## 💡 Tips for 面試加分：
-
-- 可以在前端簡單顯示錢包餘額或交易 hash
-- 用 environment variables 管理 private keys & RPC URL
-- 有事件監聽 → 展示你理解後端如何整合鏈上事件
-
-## Turborepo 專案資料夾結構骨架
-
-```
+```text
 blockchain-ethers/
-├─ package.json                  # Turborepo 根 package.json
-├─ turbo.json                    # Turborepo config
-├─ yarn.lock
-├─ packages/
-│   ├─ backend/                  # Nest.js Backend
-│   │   ├─ package.json
-│   │   ├─ tsconfig.json
-│   │   ├─ src/
-│   │   │   ├─ main.ts
-│   │   │   ├─ app.module.ts
-│   │   │   ├─ balance/
-│   │   │   │   ├─ balance.module.ts
-│   │   │   │   ├─ balance.controller.ts
-│   │   │   │   └─ balance.service.ts
-│   │   │   ├─ transfer/
-│   │   │   │   ├─ transfer.module.ts
-│   │   │   │   ├─ transfer.controller.ts
-│   │   │   │   └─ transfer.service.ts
-│   │   │   └─ events/
-│   │   │       ├─ events.module.ts
-│   │   │       └─ events.service.ts
-│   │   └─ .env
-│   └─ frontend/                 # React + TypeScript Frontend
-│       ├─ package.json
-│       ├─ tsconfig.json
-│       ├─ public/
-│       │   └─ index.html
-│       └─ src/
-│           ├─ main.tsx
-│           ├─ App.tsx
-│           ├─ pages/
-│           │   ├─ Home.tsx
-│           │   └─ Wallet.tsx
-│           ├─ components/
-│           │   ├─ WalletCard.tsx
-│           │   └─ TransactionForm.tsx
-│           └─ services/
-│               ├─ api.ts
-│               └─ web3.ts
-
+├── packages/
+│   ├── backend/      # Nest.js API (Blockchain logic, Signers, Events)
+│   └── frontend/     # React Application (Wallet UI, Dashboard)
+├── package.json      # Monorepo root scripts
+├── turbo.json        # Turborepo configuration
+└── Story.md          # User stories and requirements
 ```
+
+---
+
+## 📝 License
+
+MIT
